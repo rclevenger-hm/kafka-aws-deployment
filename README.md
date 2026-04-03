@@ -17,3 +17,15 @@ This extends the [OCI deployment](https://github.com/rclevenger-hm/kafka-oci-dep
 - Health and roundtrip tools, capacity estimates, Prometheus alerts, Grafana panels, VPC flow logs and EC2 status alarms.
 - Python regressions, Terraform mock plans and a real six-process Kafka exercise covering TLS, authorization, broker outage writes and controller leader failover.
 
+## Start here
+
+Read [deployment](docs/deployment.md), [security](docs/security.md) and [capacity and cost](docs/capacity-planning.md). Supply a reviewed Amazon Linux 2023 x86_64 AMI, three available zones, a state bucket and one existing TLS secret per node. No cloud resources are created by repository checks.
+
+```bash
+make check
+make terraform
+make integration
+```
+
+Terraform uses a checked-in provider lockfile and an S3 backend with locking. The [example inputs](terraform/terraform.tfvars.example) contain deliberate placeholders. They are not deployable until replaced with your environment's identities.
+
