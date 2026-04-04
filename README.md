@@ -45,3 +45,9 @@ flowchart TB
 
 Clients need routing into the VPC and resolution for the private DNS zone. A Session Manager shell provides administration; a single forwarded bootstrap port does not provide a route to every broker's advertised address.
 
+## Operational boundaries
+
+A successful Terraform apply does not establish Kafka readiness. Complete [acceptance](docs/acceptance.md) before admitting traffic. Live AWS provisioning, SSM sessions, EBS attachment/reboot recovery, cross-zone behavior, performance and disaster recovery must be exercised in your account.
+
+Default resources include six EC2 instances, 1,650 GiB of data storage, six boot volumes, three NAT gateways and three interface endpoint services in three zones. Review AWS costs and quotas before applying. Prometheus, Grafana, application networking, organizational PKI, remote DR clusters and human IAM grants are not provisioned.
+
