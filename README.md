@@ -29,3 +29,19 @@ make integration
 
 Terraform uses a checked-in provider lockfile and an S3 backend with locking. The [example inputs](terraform/terraform.tfvars.example) contain deliberate placeholders. They are not deployable until replaced with your environment's identities.
 
+## Topology
+
+```mermaid
+flowchart TB
+  Clients["Private applications"] -->|"9092 mTLS"| Brokers["Three or more brokers · three AZs"]
+  Brokers -->|"9093 mTLS"| Controllers["Three dedicated controllers · three AZs"]
+  Brokers --- Data["Per-node encrypted EBS"]
+  Controllers --- Data
+  Runtime["Versioned S3 manifests"] --> Brokers
+  Runtime --> Controllers
+  Secrets["Per-node TLS secrets"] --> Brokers
+  Secrets --> Controllers
+```
+
+Clients need routing into the VPC and resolution for the private DNS zone. A Session Manager shell provides administration; a single forwarded bootstrap port does not provide a route to every broker's advertised address.
+
