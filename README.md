@@ -51,3 +51,15 @@ A successful Terraform apply does not establish Kafka readiness. Complete [accep
 
 Default resources include six EC2 instances, 1,650 GiB of data storage, six boot volumes, three NAT gateways and three interface endpoint services in three zones. Review AWS costs and quotas before applying. Prometheus, Grafana, application networking, organizational PKI, remote DR clusters and human IAM grants are not provisioned.
 
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| [terraform](terraform/README.md) | AWS infrastructure, validated inputs and mock plans |
+| [bootstrap](bootstrap/provision.py) | Guarded runtime, EBS identity and TLS provisioning |
+| [tools](tools/health.py) | Health, smoke, capacity and lab certificate utilities |
+| [monitoring](monitoring/alerts.yml) | Alert rules, tests, scrape example and dashboard |
+| [tests](tests/integration.py) | Unit regressions and real Kafka fault exercises |
+| [docs](docs/README.md) | Deployment, security, acceptance and runbooks |
+
+Licensed under [MIT](LICENSE). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md).
