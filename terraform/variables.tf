@@ -96,3 +96,13 @@ variable "retention_hours" {
   }
 }
 
+variable "region" {
+  description = "Commercial AWS region containing all three availability zones."
+  type        = string
+  default     = "us-east-1"
+  validation {
+    condition     = can(regex("^[a-z]{2}-[a-z]+-[0-9]+$", var.region))
+    error_message = "Use a commercial AWS region such as us-east-1."
+  }
+}
+
