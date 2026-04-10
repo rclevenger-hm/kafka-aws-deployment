@@ -106,3 +106,13 @@ variable "region" {
   }
 }
 
+variable "zones" {
+  description = "Exactly three distinct standard availability zones in region."
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  validation {
+    condition     = length(var.zones) == 3 && length(toset(var.zones)) == 3 && alltrue([for z in var.zones : can(regex("^${var.region}[a-z]$", z))])
+    error_message = "Select three distinct standard zones in region."
+  }
+}
+
