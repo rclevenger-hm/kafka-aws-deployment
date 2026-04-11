@@ -116,3 +116,13 @@ variable "zones" {
   }
 }
 
+variable "vpc_cidr" {
+  description = "Dedicated RFC1918 IPv4 VPC, /16 through /20; six /19 through /23 subnets derived automatically."
+  type        = string
+  default     = "10.42.0.0/16"
+  validation {
+    condition     = can(cidrnetmask(var.vpc_cidr)) && can(regex("^(10\\.|192\\.168\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.)", var.vpc_cidr)) && try(tonumber(split("/", var.vpc_cidr)[1]) >= 16 && tonumber(split("/", var.vpc_cidr)[1]) <= 20, false)
+    error_message = "Use an RFC1918 IPv4 VPC between /16 and /20."
+  }
+}
+
