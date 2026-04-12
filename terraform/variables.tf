@@ -126,3 +126,12 @@ variable "vpc_cidr" {
   }
 }
 
+variable "ami_id" {
+  description = "Pinned Amazon-owned AL2023 standard x86_64 AMI in region; resolve and review before apply."
+  type        = string
+  validation {
+    condition     = can(regex("^ami-[a-f0-9]{17}$", var.ami_id))
+    error_message = "Provide a pinned AMI ID; do not use a moving latest image."
+  }
+}
+
