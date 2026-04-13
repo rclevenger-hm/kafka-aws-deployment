@@ -145,3 +145,13 @@ variable "broker_instance_type" {
   }
 }
 
+variable "controller_instance_type" {
+  description = "Nitro x86_64 EC2 type; benchmark network and EBS bandwidth."
+  type        = string
+  default     = "m6i.large"
+  validation {
+    condition     = can(regex("^(m[6-7]i|m[6-7]a|r[6-7]i|r[6-7]a|c[6-7]i|c[6-7]a)\\.(large|xlarge|[0-9]+xlarge)$", var.controller_instance_type))
+    error_message = "Use a supported x86_64 Nitro instance family, large or larger."
+  }
+}
+
