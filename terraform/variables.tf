@@ -155,3 +155,13 @@ variable "controller_instance_type" {
   }
 }
 
+variable "broker_disk_gb" {
+  description = "Encrypted gp3 data volume size in GiB."
+  type        = number
+  default     = 500
+  validation {
+    condition     = var.broker_disk_gb >= 20 && var.broker_disk_gb <= 16384 && floor(var.broker_disk_gb) == var.broker_disk_gb
+    error_message = "Use a whole size from 20 to 16384 GiB."
+  }
+}
+
