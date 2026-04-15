@@ -185,3 +185,13 @@ variable "broker_disk_iops" {
   }
 }
 
+variable "broker_disk_throughput" {
+  description = "Provisioned gp3 throughput in MiB/s."
+  type        = number
+  default     = 125
+  validation {
+    condition     = var.broker_disk_throughput >= 125 && var.broker_disk_throughput <= 1000 && floor(var.broker_disk_throughput) == var.broker_disk_throughput && var.broker_disk_throughput <= var.broker_disk_iops / 4
+    error_message = "Use 125-1000 whole MiB/s, no more than one quarter of IOPS."
+  }
+}
+
