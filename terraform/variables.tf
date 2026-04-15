@@ -175,3 +175,13 @@ variable "controller_disk_gb" {
   }
 }
 
+variable "broker_disk_iops" {
+  description = "Provisioned gp3 IOPS; conservative portable range."
+  type        = number
+  default     = 3000
+  validation {
+    condition     = var.broker_disk_iops >= 3000 && var.broker_disk_iops <= 16000 && floor(var.broker_disk_iops) == var.broker_disk_iops && var.broker_disk_iops <= var.broker_disk_gb * 500
+    error_message = "Use 3000-16000 whole IOPS, no more than 500 per GiB."
+  }
+}
+
