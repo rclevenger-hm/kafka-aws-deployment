@@ -195,3 +195,12 @@ variable "broker_disk_throughput" {
   }
 }
 
+variable "tls_secrets" {
+  description = "Node name to existing Secrets Manager ARN and immutable version ID. Payloads never enter Terraform."
+  type        = map(object({ arn = string, version_id = string }))
+  validation {
+    condition     = alltrue([for s in values(var.tls_secrets) : can(regex("^arn:aws:secretsmanager:${var.region}:[0-9]{12}:secret:[A-Za-z0-9/_+=.@-]+$", s.arn)) && can(regex("^[A-Za-z0-9-]{32,64}$", s.version_id))])
+    error_message = "Each node requires a Secrets Manager ARN in region and a 32-64 character immutable version ID."
+  }
+}
+
