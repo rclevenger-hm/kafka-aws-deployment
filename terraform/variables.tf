@@ -204,3 +204,13 @@ variable "tls_secrets" {
   }
 }
 
+variable "secret_kms_key_arns" {
+  description = "Optional customer-managed KMS keys used by TLS secrets; runtime decrypt is restricted to Secrets Manager."
+  type        = set(string)
+  default     = []
+  validation {
+    condition     = alltrue([for a in var.secret_kms_key_arns : can(regex("^arn:aws:kms:${var.region}:[0-9]{12}:key/[a-f0-9-]+$", a))])
+    error_message = "Use KMS key ARNs in the selected region."
+  }
+}
+
