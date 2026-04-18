@@ -214,3 +214,13 @@ variable "secret_kms_key_arns" {
   }
 }
 
+variable "ebs_kms_key_arn" {
+  description = "Optional customer-managed EBS encryption key ARN; null uses AWS managed EBS key."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.ebs_kms_key_arn == null ? true : can(regex("^arn:aws:kms:${var.region}:[0-9]{12}:key/[a-f0-9-]+$", var.ebs_kms_key_arn))
+    error_message = "Use a KMS key ARN in region or null."
+  }
+}
+
