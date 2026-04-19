@@ -224,3 +224,9 @@ variable "ebs_kms_key_arn" {
   }
 }
 
+variable "deletion_protection" {
+  description = "EC2 API termination protection; independent EBS prevent_destroy remains enforced."
+  type        = bool
+  default     = true
+}
+
