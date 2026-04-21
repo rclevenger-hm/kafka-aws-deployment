@@ -236,3 +236,9 @@ variable "enable_private_endpoints" {
   default     = true
 }
 
+variable "enable_flow_logs" {
+  description = "Capture VPC accepted and rejected traffic metadata to CloudWatch."
+  type        = bool
+  default     = true
+}
+
