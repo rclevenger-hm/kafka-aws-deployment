@@ -242,3 +242,13 @@ variable "enable_flow_logs" {
   default     = true
 }
 
+variable "log_retention_days" {
+  description = "CloudWatch flow-log retention."
+  type        = number
+  default     = 30
+  validation {
+    condition     = contains([7, 14, 30, 60, 90, 180, 365], var.log_retention_days)
+    error_message = "Use one of 7,14,30,60,90,180,365 days."
+  }
+}
+
