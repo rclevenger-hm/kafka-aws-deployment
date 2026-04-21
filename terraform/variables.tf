@@ -230,3 +230,9 @@ variable "deletion_protection" {
   default     = true
 }
 
+variable "enable_private_endpoints" {
+  description = "Interface endpoints for SSM, session messages and Secrets Manager in every zone. NAT remains necessary for package downloads."
+  type        = bool
+  default     = true
+}
+
