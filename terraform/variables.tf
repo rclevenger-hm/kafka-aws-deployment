@@ -252,3 +252,13 @@ variable "log_retention_days" {
   }
 }
 
+variable "alarm_topic_arns" {
+  description = "Existing same-region SNS topics for alarms; empty creates visible alarms without notifications."
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for a in var.alarm_topic_arns : can(regex("^arn:aws:sns:${var.region}:[0-9]{12}:[A-Za-z0-9_-]+$", a))])
+    error_message = "Use same-region SNS topic ARNs."
+  }
+}
+
