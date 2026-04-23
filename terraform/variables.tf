@@ -262,3 +262,8 @@ variable "alarm_topic_arns" {
   }
 }
 
+variable "tags" {
+  description = "Additional ownership and billing tags."
+  type        = map(string)
+  default     = {}
+}
