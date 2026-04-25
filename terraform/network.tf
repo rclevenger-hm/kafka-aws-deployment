@@ -4,3 +4,4 @@ resource "aws_vpc" "kafka" {
   enable_dns_hostnames = true
   tags                 = { Name = "${var.name_prefix}-vpc" }
 }
+resource "aws_internet_gateway" "egress" { vpc_id = aws_vpc.kafka.id }
