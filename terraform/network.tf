@@ -5,3 +5,11 @@ resource "aws_vpc" "kafka" {
   tags                 = { Name = "${var.name_prefix}-vpc" }
 }
 resource "aws_internet_gateway" "egress" { vpc_id = aws_vpc.kafka.id }
+resource "aws_subnet" "private" {
+  for_each                = local.azs
+  vpc_id                  = aws_vpc.kafka.id
+  availability_zone       = each.key
+  cidr_block              = cidrsubnet(var.vpc_cidr, 3, each.value)
+  map_public_ip_on_launch = false
+  tags                    = { Name = "${var.name_prefix}-private-${each.key}" }
+}
