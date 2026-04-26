@@ -13,3 +13,11 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
   tags                    = { Name = "${var.name_prefix}-private-${each.key}" }
 }
+resource "aws_subnet" "public" {
+  for_each                = local.azs
+  vpc_id                  = aws_vpc.kafka.id
+  availability_zone       = each.key
+  cidr_block              = cidrsubnet(var.vpc_cidr, 3, each.value + 3)
+  map_public_ip_on_launch = false
+  tags                    = { Name = "${var.name_prefix}-egress-${each.key}" }
+}
