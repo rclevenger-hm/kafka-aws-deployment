@@ -22,3 +22,8 @@ resource "aws_subnet" "public" {
   tags                    = { Name = "${var.name_prefix}-egress-${each.key}" }
 }
 resource "aws_route_table" "public" { vpc_id = aws_vpc.kafka.id }
+resource "aws_route" "internet" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.egress.id
+}
