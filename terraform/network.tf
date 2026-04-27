@@ -21,3 +21,4 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = false
   tags                    = { Name = "${var.name_prefix}-egress-${each.key}" }
 }
+resource "aws_route_table" "public" { vpc_id = aws_vpc.kafka.id }
