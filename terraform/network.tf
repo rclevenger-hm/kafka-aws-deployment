@@ -42,3 +42,7 @@ resource "aws_nat_gateway" "egress" {
   subnet_id     = aws_subnet.public[each.key].id
   depends_on    = [aws_internet_gateway.egress]
 }
+resource "aws_route_table" "private" {
+  for_each = local.azs
+  vpc_id   = aws_vpc.kafka.id
+}
