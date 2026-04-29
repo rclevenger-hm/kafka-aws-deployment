@@ -36,3 +36,9 @@ resource "aws_eip" "nat" {
   for_each = local.azs
   domain   = "vpc"
 }
+resource "aws_nat_gateway" "egress" {
+  for_each      = local.azs
+  allocation_id = aws_eip.nat[each.key].id
+  subnet_id     = aws_subnet.public[each.key].id
+  depends_on    = [aws_internet_gateway.egress]
+}
