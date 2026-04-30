@@ -46,3 +46,9 @@ resource "aws_route_table" "private" {
   for_each = local.azs
   vpc_id   = aws_vpc.kafka.id
 }
+resource "aws_route" "egress" {
+  for_each               = local.azs
+  route_table_id         = aws_route_table.private[each.key].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.egress[each.key].id
+}
