@@ -63,3 +63,12 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [for rt in aws_route_table.private : rt.id]
 }
+resource "aws_vpc_endpoint" "management" {
+  for_each            = var.enable_private_endpoints ? toset(["ssm", "ssmmessages", "secretsmanager"]) : toset([])
+  vpc_id              = aws_vpc.kafka.id
+  service_name        = "com.amazonaws.${var.region}.${each.key}"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = [for s in aws_subnet.private : s.id]
+  security_group_ids  = [aws_security_group.endpoint.id]
+}
