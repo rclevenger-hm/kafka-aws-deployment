@@ -8,3 +8,8 @@ resource "aws_iam_instance_profile" "node" {
   name_prefix = "${each.key}-"
   role        = aws_iam_role.node[each.key].name
 }
+resource "aws_iam_role_policy_attachment" "ssm" {
+  for_each   = local.nodes
+  role       = aws_iam_role.node[each.key].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
