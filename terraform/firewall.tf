@@ -11,3 +11,11 @@ resource "aws_vpc_security_group_egress_rule" "node" {
   cidr_ipv4         = "0.0.0.0/0"
   description       = "NAT egress for distribution and verified artifacts; constrain with an egress proxy if required"
 }
+resource "aws_vpc_security_group_ingress_rule" "quorum" {
+  for_each                     = aws_security_group.node
+  security_group_id            = aws_security_group.node["controller"].id
+  referenced_security_group_id = each.value.id
+  ip_protocol                  = "tcp"
+  from_port                    = 9093
+  to_port                      = 9093
+}
