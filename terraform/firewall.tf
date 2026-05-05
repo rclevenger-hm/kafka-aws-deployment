@@ -27,3 +27,11 @@ resource "aws_vpc_security_group_ingress_rule" "replication" {
   from_port                    = 9094
   to_port                      = 9094
 }
+resource "aws_vpc_security_group_ingress_rule" "clients" {
+  for_each          = var.client_cidrs
+  security_group_id = aws_security_group.node["broker"].id
+  cidr_ipv4         = each.value
+  ip_protocol       = "tcp"
+  from_port         = 9092
+  to_port           = 9092
+}
