@@ -19,3 +19,11 @@ resource "aws_vpc_security_group_ingress_rule" "quorum" {
   from_port                    = 9093
   to_port                      = 9093
 }
+resource "aws_vpc_security_group_ingress_rule" "replication" {
+  for_each                     = aws_security_group.node
+  security_group_id            = aws_security_group.node["broker"].id
+  referenced_security_group_id = each.value.id
+  ip_protocol                  = "tcp"
+  from_port                    = 9094
+  to_port                      = 9094
+}
