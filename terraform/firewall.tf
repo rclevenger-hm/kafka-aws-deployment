@@ -35,3 +35,6 @@ resource "aws_vpc_security_group_ingress_rule" "clients" {
   from_port         = 9092
   to_port           = 9092
 }
+locals {
+  metrics_rules = { for pair in setproduct(["broker", "controller"], var.metrics_cidrs) : "${pair[0]}-${pair[1]}" => { role = pair[0], cidr = pair[1] } }
+}
