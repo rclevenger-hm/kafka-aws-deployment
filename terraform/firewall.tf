@@ -46,3 +46,8 @@ resource "aws_vpc_security_group_ingress_rule" "metrics" {
   from_port         = 9404
   to_port           = 9404
 }
+resource "aws_security_group" "endpoint" {
+  name_prefix = "${var.name_prefix}-endpoint-"
+  description = "Private HTTPS management endpoints"
+  vpc_id      = aws_vpc.kafka.id
+}
