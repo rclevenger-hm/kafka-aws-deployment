@@ -38,3 +38,11 @@ resource "aws_vpc_security_group_ingress_rule" "clients" {
 locals {
   metrics_rules = { for pair in setproduct(["broker", "controller"], var.metrics_cidrs) : "${pair[0]}-${pair[1]}" => { role = pair[0], cidr = pair[1] } }
 }
+resource "aws_vpc_security_group_ingress_rule" "metrics" {
+  for_each          = local.metrics_rules
+  security_group_id = aws_security_group.node[each.value.role].id
+  cidr_ipv4         = each.value.cidr
+  ip_protocol       = "tcp"
+  from_port         = 9404
+  to_port           = 9404
+}
