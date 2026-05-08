@@ -51,3 +51,11 @@ resource "aws_security_group" "endpoint" {
   description = "Private HTTPS management endpoints"
   vpc_id      = aws_vpc.kafka.id
 }
+resource "aws_vpc_security_group_ingress_rule" "endpoint" {
+  for_each                     = aws_security_group.node
+  security_group_id            = aws_security_group.endpoint.id
+  referenced_security_group_id = each.value.id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+}
