@@ -10,3 +10,11 @@ resource "aws_ebs_volume" "data" {
   tags              = { Name = "${each.key}-data", Role = each.value.role, Cluster = var.name_prefix }
   lifecycle { prevent_destroy = true }
 }
+resource "aws_volume_attachment" "data" {
+  for_each                       = local.nodes
+  device_name                    = "/dev/sdf"
+  volume_id                      = aws_ebs_volume.data[each.key].id
+  instance_id                    = aws_instance.node[each.key].id
+  force_detach                   = false
+  stop_instance_before_detaching = true
+}
