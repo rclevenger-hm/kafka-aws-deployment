@@ -18,3 +18,8 @@ resource "aws_volume_attachment" "data" {
   force_detach                   = false
   stop_instance_before_detaching = true
 }
+resource "aws_s3_bucket" "runtime" {
+  bucket_prefix = "${var.name_prefix}-runtime-"
+  force_destroy = false
+  lifecycle { prevent_destroy = true }
+}
