@@ -30,3 +30,7 @@ resource "aws_s3_bucket_public_access_block" "runtime" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+resource "aws_s3_bucket_ownership_controls" "runtime" {
+  bucket = aws_s3_bucket.runtime.id
+  rule { object_ownership = "BucketOwnerEnforced" }
+}
