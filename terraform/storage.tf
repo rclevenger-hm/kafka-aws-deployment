@@ -44,3 +44,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "runtime" {
     apply_server_side_encryption_by_default { sse_algorithm = "AES256" }
   }
 }
+resource "aws_s3_bucket_policy" "runtime" {
+  bucket = aws_s3_bucket.runtime.id
+  policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Sid       = "DenyInsecureTransport", Effect = "Deny", Principal = "*", Action = "s3:*",
+    Resource  = [aws_s3_bucket.runtime.arn, "${aws_s3_bucket.runtime.arn}/*"],
+    Condition = { Bool = { "aws:SecureTransport" = "false" } }
+  }] })
+}
