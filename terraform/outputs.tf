@@ -11,3 +11,4 @@ output "nodes" {
     runtime_version = aws_s3_object.node[name].version_id
   } }
 }
+output "runtime_bucket" { value = aws_s3_bucket.runtime.id }
