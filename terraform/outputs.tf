@@ -13,3 +13,4 @@ output "nodes" {
 }
 output "runtime_bucket" { value = aws_s3_bucket.runtime.id }
 output "vpc_id" { value = aws_vpc.kafka.id }
+output "private_subnet_ids" { value = { for zone, subnet in aws_subnet.private : zone => subnet.id } }
