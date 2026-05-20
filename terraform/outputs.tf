@@ -12,3 +12,4 @@ output "nodes" {
   } }
 }
 output "runtime_bucket" { value = aws_s3_bucket.runtime.id }
+output "vpc_id" { value = aws_vpc.kafka.id }
