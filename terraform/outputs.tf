@@ -15,3 +15,6 @@ output "runtime_bucket" { value = aws_s3_bucket.runtime.id }
 output "vpc_id" { value = aws_vpc.kafka.id }
 output "private_subnet_ids" { value = { for zone, subnet in aws_subnet.private : zone => subnet.id } }
 output "security_group_ids" { value = { for role, sg in aws_security_group.node : role => sg.id } }
+output "session_commands" {
+  value = { for name, node in aws_instance.node : name => "aws ssm start-session --region ${var.region} --target ${node.id}" }
+}
