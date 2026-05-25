@@ -51,3 +51,19 @@ def request(url, headers=None):
             time.sleep(2 ** attempt)
 
 
+def secret_payload(arn, version, region):
+    if not re.fullmatch(r"[a-z]{2}-[a-z]+-[0-9]+", region):
+        raise ValueError("Invalid AWS region")
+    if not re.fullmatch(r"arn:aws:secretsmanager:" + re.escape(region) + r":[0-9]{12}:secret:[A-Za-z0-9/_+=.@-]+", arn):
+        raise ValueError("Expected a Secrets Manager ARN in this region")
+    if not re.fullmatch(r"[A-Za-z0-9-]{32,64}", version):
+        raise ValueError("Expected an immutable Secrets Manager version ID")
+    result = run("aws", "secretsmanager", "get-secret-value", "--secret-id", arn,
+                 "--version-id", version, "--region", region, "--output", "json",
+                 "--no-cli-pager", capture_output=True)
+    response = json.loads(result.stdout)
+    if response.get("VersionId") != version or response.get("ARN") != arn:
+        raise ValueError("Secret response does not match the pinned identity")
+    return json.loads(response["SecretString"])
+
+
