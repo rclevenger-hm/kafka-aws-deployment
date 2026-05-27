@@ -170,3 +170,13 @@ def download_kafka(version, destination, expected):
         download_verified(f"https://archive.apache.org/dist/kafka/{version}/{artifact}", destination, expected)
 
 
+def extract_verified(archive, destination):
+    with tarfile.open(archive) as tar:
+        base = Path(destination).resolve()
+        for member in tar.getmembers():
+            target = (base / member.name).resolve()
+            if not target.is_relative_to(base) or not (member.isfile() or member.isdir()):
+                raise ValueError("Unsafe archive member")
+        tar.extractall(destination)  # all paths and types checked above
+
+
