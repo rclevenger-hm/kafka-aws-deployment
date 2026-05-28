@@ -180,3 +180,24 @@ def extract_verified(archive, destination):
         tar.extractall(destination)  # all paths and types checked above
 
 
+def select_ebs_device(blocks, volume_id):
+    """Resolve Nitro EBS serials, never infer a data disk from enumeration order."""
+    if not re.fullmatch(r"vol-[a-f0-9]{17}", volume_id):
+        raise ValueError("Invalid EBS volume ID")
+    serial = volume_id.replace("-", "")
+    matches = [b for b in blocks if (b.get("serial") or "").strip().replace("-", "") == serial]
+    if not matches:
+        return None
+    if len(matches) != 1:
+        raise ValueError("Ambiguous EBS identity")
+    disk = matches[0]
+    if disk.get("type") != "disk" or disk.get("children"):
+        raise ValueError("Expected a dedicated unpartitioned EBS data volume")
+    if disk.get("mountpoint") not in (None, "", "/var/lib/kafka"):
+        raise ValueError("EBS volume is mounted outside the Kafka data path")
+    name = disk.get("name", "")
+    if not re.fullmatch(r"/dev/nvme[0-9]+n[0-9]+", name):
+        raise ValueError("Expected a Nitro NVMe EBS device")
+    return Path(name)
+
+
