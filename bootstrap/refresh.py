@@ -53,3 +53,16 @@ def refresh(allow_change=False, version_id=None):
                 os.chmod(active / name, 0o600)
 
 
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--apply-change", action="store_true")
+    parser.add_argument("--version-id", help="Optional recorded S3 object version for controlled rollback")
+    args = parser.parse_args()
+    if os.geteuid() != 0:
+        parser.error("Run as root through an authorized administrative session")
+    os.umask(0o077)
+    refresh(args.apply_change, args.version_id)
+
+
+if __name__ == "__main__":
+    main()
