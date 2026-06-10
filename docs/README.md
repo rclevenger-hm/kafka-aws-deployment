@@ -25,3 +25,11 @@
 - [Broker scaling](runbooks/scaling.md)
 - [Decommission](runbooks/decommission.md)
 
+## Decisions
+
+- [Self-managed EC2](decisions/001-self-managed.md)
+- [Runtime lifecycle](decisions/002-runtime-lifecycle.md)
+- [Availability and egress](decisions/003-availability.md)
+- [Roadmap](roadmap.md)
+
+- [Primary references](references.md)
