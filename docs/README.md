@@ -15,3 +15,13 @@
 - [Observability](observability.md)
 - [Failure exercises](failure-exercises.md)
 
+## Operate
+
+- [Daily operations](runbooks/operations.md)
+- [Rolling changes](runbooks/rolling-upgrade.md)
+- [Certificate rotation](runbooks/certificate-rotation.md)
+- [Recovery](runbooks/recovery.md)
+- [EBS expansion](runbooks/storage-expansion.md)
+- [Broker scaling](runbooks/scaling.md)
+- [Decommission](runbooks/decommission.md)
+
