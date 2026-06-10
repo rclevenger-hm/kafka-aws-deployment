@@ -8,3 +8,10 @@
 - [Capacity and cost](capacity-planning.md)
 - [AWS, GCP and OCI capability comparison](parity.md)
 
+## Validate and observe
+
+- [Testing](testing.md)
+- [Acceptance](acceptance.md)
+- [Observability](observability.md)
+- [Failure exercises](failure-exercises.md)
+
