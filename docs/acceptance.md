@@ -6,3 +6,7 @@ Record environment, account/region, source commit, AMI, Kafka/JDK/provider versi
 
 Verify three real AZs, instance placement, no public node addresses, no inbound SSH, mandatory IMDSv2, encrypted root/data EBS, deletion guards, per-node IAM and private DNS. Confirm S3 public access blocking/versioning and that nodes cannot read another node's secret or runtime object.
 
+## Bootstrap gate
+
+Confirm each pinned AMI includes required tooling and SSM Agent, every EBS serial matches its declared volume, services run as `kafka`, expected UUIDs are mounted, and initial bootstrap succeeds from the private subnet. Test a reboot and recovery from a delayed EBS attachment. Re-running unchanged provisioning must preserve cluster identity and data.
+
