@@ -18,3 +18,7 @@ Require three healthy quorum voters, zero follower lag, all brokers registered a
 
 At representative load, stop one broker, restart the controller leader, reboot one host and isolate one AZ in a controlled environment. Measure availability, client errors/p99, election time, recovery lag and replica placement. Do not assume local-process CI simulates regional or AZ infrastructure failures. Complete [failure exercises](failure-exercises.md).
 
+## Operations gate
+
+Verify alert delivery to the responsible team, host disk/certificate expiry monitoring, rolling runtime updates, secret rotation, state recovery, a disk expansion and tested backup/DR restoration. Record measured RPO/RTO and accepted cost/quotas. Assign ownership for patching, certificates and incident response.
+
