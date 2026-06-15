@@ -22,3 +22,6 @@ At representative load, stop one broker, restart the controller leader, reboot o
 
 Verify alert delivery to the responsible team, host disk/certificate expiry monitoring, rolling runtime updates, secret rotation, state recovery, a disk expansion and tested backup/DR restoration. Record measured RPO/RTO and accepted cost/quotas. Assign ownership for patching, certificates and incident response.
 
+## Sign-off
+
+Approve application traffic only when remaining deviations have named owners and explicit acceptance. Preserve the tested source revision and rollback material. Revisit relevant gates after machine image, network, encryption, Kafka feature-level or recovery-design changes.
