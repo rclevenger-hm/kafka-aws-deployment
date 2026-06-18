@@ -18,3 +18,9 @@ Kafka uses dynamic KRaft quorum bootstrap addresses and an explicit initial vote
 
 No inbound SSH rule, public IP or Kafka load balancer exists. Brokers advertise their own private DNS names. Route 53 VPC association covers the created VPC; peered or on-premises clients need their own reviewed DNS and routing integration.
 
+## Storage and identity
+
+The bootstrap matches the expected EBS volume ID against the Nitro NVMe serial. It rejects ambiguous, partitioned, incorrectly mounted or non-NVMe devices. Only a disk with no detected signatures is formatted; existing ext4 filesystems are mounted by UUID. Kafka metadata must match both cluster and node IDs, and partial or nonempty unformatted storage is refused.
+
+EC2 and EBS resources have `prevent_destroy`; EC2 API termination protection is also enabled. Attachments prohibit forced detachment. These guards require an explicit reviewed code change for replacement or teardown. They do not replace backups, replication or account access controls.
+
