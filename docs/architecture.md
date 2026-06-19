@@ -24,3 +24,9 @@ The bootstrap matches the expected EBS volume ID against the Nitro NVMe serial. 
 
 EC2 and EBS resources have `prevent_destroy`; EC2 API termination protection is also enabled. Attachments prohibit forced detachment. These guards require an explicit reviewed code change for replacement or teardown. They do not replace backups, replication or account access controls.
 
+## Runtime lifecycle
+
+Terraform stores source and nonsecret configuration in one versioned S3 object per node. EC2 user data installs a small refresh entry point and loads that object at initial boot. Running Kafka is not automatically rolled when an S3 object changes. `kafka-refresh` stages a manifest under a local lock; a changed fingerprint requires `--apply-change` on that node.
+
+The service starts on subsequent boots using its installed files and UUID mount. S3, Secrets Manager and the artifact CDN are required for provisioning or refreshing, not for every service restart. The [rolling runbook](runbooks/rolling-upgrade.md) requires external Kafka health gates between nodes.
+
