@@ -30,3 +30,8 @@ Terraform stores source and nonsecret configuration in one versioned S3 object p
 
 The service starts on subsequent boots using its installed files and UUID mount. S3, Secrets Manager and the artifact CDN are required for provisioning or refreshing, not for every service restart. The [rolling runbook](runbooks/rolling-upgrade.md) requires external Kafka health gates between nodes.
 
+## Durability settings
+
+All default topics use RF3 and minimum ISR2. Idempotent producers with `acks=all` can continue when one replica is unavailable if two in-sync replicas remain. Losing two replicas deliberately stops acknowledged writes. Automatic topic creation and unclean leader election are disabled. Changing a broker default does not modify existing topic-level overrides.
+
+Broker rack labels are AWS AZ names; verify actual replica placement after creating or reassigning topics. An RF3 cluster with only three brokers needs replacement capacity to regain RF3 after permanent node loss.
