@@ -17,3 +17,18 @@ Brokers default to 500 GiB gp3, 3,000 IOPS and 125 MiB/s. Controllers default to
 
 Use [storage expansion](runbooks/storage-expansion.md) before exhaustion. AWS enlarges the block device separately from filesystem growth. The bootstrap intentionally does not shrink or automatically resize an existing filesystem.
 
+## Cost worksheet
+
+| Contributor | Default quantity or driver |
+|---|---|
+| EC2 | Three m6i.xlarge brokers and three m6i.large controllers, continuously running |
+| Data EBS | 1,500 GiB broker +150 GiB controller gp3 |
+| Root EBS | Six 20 GiB gp3 volumes |
+| NAT | Three gateways, associated public IPv4 addresses and bytes processed |
+| PrivateLink | Three services in three AZs; hourly and data charges |
+| Network | Cross-AZ replication, client traffic, mirrors and DR |
+| Operations | Route53, Secrets Manager, S3 state/runtime versions, logs, alarms and detailed EC2 monitoring |
+| External systems | Prometheus/Grafana, organizational PKI, snapshots and remote DR cluster |
+
+Use AWS's current regional pricing calculator; this repository does not promise a monthly cost. Configure account budgets and ownership tags before apply. Disabling optional interface endpoints routes those APIs through NAT; compare both resilience and measured costs.
+
