@@ -32,3 +32,6 @@ Use [storage expansion](runbooks/storage-expansion.md) before exhaustion. AWS en
 
 Use AWS's current regional pricing calculator; this repository does not promise a monthly cost. Configure account budgets and ownership tags before apply. Disabling optional interface endpoints routes those APIs through NAT; compare both resilience and measured costs.
 
+## Scaling decisions
+
+Add brokers before partition or network saturation. Infrastructure creation does not move existing replicas. Follow [scaling](runbooks/scaling.md), use throttled reassignment and inspect zone placement. Separate controller scaling from broker scaling; this reference maintains exactly three controllers.
