@@ -6,3 +6,15 @@ Use a dedicated AWS account/environment, AWS CLI v2 with short-lived operator cr
 
 Select three standard AZs with the chosen x86_64 Nitro instance types available. Confirm quotas for six instances, EBS capacity/IOPS, three EIPs/NAT gateways, nine interface endpoint ENIs, IAM roles and private DNS. Configure a private client and collector path. Review [capacity and cost](capacity-planning.md).
 
+## Pin the machine image
+
+Resolve an Amazon Linux 2023 standard x86_64 AMI in your chosen region, review its release and pin the returned ID in `ami_id`:
+
+```bash
+aws ssm get-parameter --region us-east-1 \
+  --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
+  --query Parameter.Value --output text
+```
+
+The module checks Amazon ownership, image ID, AL2023 standard name, x86_64 and HVM. It does not follow the moving parameter automatically. Verify AWS CLI v2, Python 3 and a running SSM Agent in a canary image before cluster rollout. Machine-image changes require the explicit replacement runbook because `prevent_destroy` blocks implicit replacement.
+
