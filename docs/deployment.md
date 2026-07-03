@@ -18,3 +18,9 @@ aws ssm get-parameter --region us-east-1 \
 
 The module checks Amazon ownership, image ID, AL2023 standard name, x86_64 and HVM. It does not follow the moving parameter automatically. Verify AWS CLI v2, Python 3 and a running SSM Agent in a canary image before cluster rollout. Machine-image changes require the explicit replacement runbook because `prevent_destroy` blocks implicit replacement.
 
+## State and authentication
+
+Authenticate with an approved AWS SSO profile or workload identity. Create a versioned, encrypted, private S3 state bucket outside this module, using a unique key per environment. Restrict state and lockfile access to deployment operators. Set `use_lockfile = true` and leave locking enabled. Configure the backend region separately if the state bucket is elsewhere.
+
+Copy `terraform/backend.hcl.example` to `terraform/backend.hcl`. State includes operational metadata and references but no TLS payloads. It still requires access protection and tested recovery. After test initialization with `-backend=false`, reinitialize with `-reconfigure` for deployment.
+
