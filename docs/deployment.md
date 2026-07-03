@@ -24,3 +24,24 @@ Authenticate with an approved AWS SSO profile or workload identity. Create a ver
 
 Copy `terraform/backend.hcl.example` to `terraform/backend.hcl`. State includes operational metadata and references but no TLS payloads. It still requires access protection and tested recovery. After test initialization with `-backend=false`, reinitialize with `-reconfigure` for deployment.
 
+## Prepare TLS identities
+
+Each node needs exactly `CN=<node-name>`, its advertised FQDN in DNS SAN, both serverAuth and clientAuth usages, and an unencrypted PKCS8 key. Use your organizational CA in production. Node JSON bundles contain PEM string fields `certificate`, `private_key` and `ca`.
+
+For a disposable lab only:
+
+```bash
+python3 tools/lab_pki.py --out pki --prefix kafka --domain kafka.internal --brokers 3
+```
+
+The generator refuses overwrite and issues 30-day certificates. Keep `ca.key` offline and retain the admin identity on an authorized operator host. Upload only each node's JSON to its own existing Secrets Manager secret. For one node:
+
+```bash
+aws secretsmanager create-secret --region us-east-1 \
+  --name kafka-broker-1-tls \
+  --secret-string file://pki/kafka-broker-1.json \
+  --query '{arn:ARN,version_id:VersionId}' --output json
+```
+
+Repeat for all six default nodes. Put the returned ARN/version ID pairs in `tls_secrets`, keyed by exact node name. Never put PEM payloads into Terraform inputs. The module requires all configured nodes and unique secret ARNs. Runtime roles can read their own secret; the configured immutable version ID selects its content. Include `secret_kms_key_arns` if the secrets use customer-managed KMS keys, and authorize those roles in the keys' policies.
+
