@@ -45,3 +45,17 @@ aws secretsmanager create-secret --region us-east-1 \
 
 Repeat for all six default nodes. Put the returned ARN/version ID pairs in `tls_secrets`, keyed by exact node name. Never put PEM payloads into Terraform inputs. The module requires all configured nodes and unique secret ARNs. Runtime roles can read their own secret; the configured immutable version ID selects its content. Include `secret_kms_key_arns` if the secrets use customer-managed KMS keys, and authorize those roles in the keys' policies.
 
+## Plan and apply
+
+```bash
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+cp terraform/backend.hcl.example terraform/backend.hcl
+# Edit both files: AMI, zones, secret references, allowlists and state bucket.
+terraform -chdir=terraform init -reconfigure -backend-config=backend.hcl
+terraform -chdir=terraform plan -out=deployment.tfplan
+terraform -chdir=terraform apply deployment.tfplan
+terraform -chdir=terraform output
+```
+
+Review the saved plan for intended account/region, three zones, no public node IPs, narrow ingress, encrypted protected storage and correct per-node secrets. Initial bootstrap waits up to five minutes for the separately attached EBS disk. Terraform success alone is not Kafka readiness.
+
