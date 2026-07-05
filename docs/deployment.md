@@ -59,3 +59,16 @@ terraform -chdir=terraform output
 
 Review the saved plan for intended account/region, three zones, no public node IPs, narrow ingress, encrypted protected storage and correct per-node secrets. Initial bootstrap waits up to five minutes for the separately attached EBS disk. Terraform success alone is not Kafka readiness.
 
+## Inspect startup
+
+Use the `session_commands` output with the Session Manager plugin installed. Human IAM must grant the intended session access; this module grants node connectivity only. On the node:
+
+```bash
+sudo cloud-init status --long
+sudo journalctl -u cloud-final -u kafka --since '-30 minutes'
+sudo systemctl status kafka
+sudo findmnt /var/lib/kafka
+```
+
+If the initial download or attachment timed out, inspect the cause and retry `sudo kafka-refresh`. A changed installed runtime intentionally requires the [rolling procedure](runbooks/rolling-upgrade.md). Do not print secret bundles or include them in diagnostic logs.
+
