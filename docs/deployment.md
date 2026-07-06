@@ -72,3 +72,13 @@ sudo findmnt /var/lib/kafka
 
 If the initial download or attachment timed out, inspect the cause and retry `sudo kafka-refresh`. A changed installed runtime intentionally requires the [rolling procedure](runbooks/rolling-upgrade.md). Do not print secret bundles or include them in diagnostic logs.
 
+## Establish readiness
+
+From a private client host with Kafka binaries, resolve all advertised broker names. Copy [client.properties.example](../config/client.properties.example) into a protected file with absolute certificate paths, then run:
+
+```bash
+python3 tools/health.py --bootstrap BROKER_ENDPOINTS --config /secure/client.properties
+python3 tools/smoke.py --bootstrap BROKER_ENDPOINTS --config /secure/client.properties
+```
+
+The smoke tool creates a uniquely named RF3 topic, verifies its exact payload and removes only that topic. Complete [acceptance](acceptance.md), install collectors and grant application ACLs before admitting traffic.
