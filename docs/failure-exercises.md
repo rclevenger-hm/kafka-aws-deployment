@@ -12,3 +12,7 @@ Stop Kafka on one broker, retaining its EBS volume. Confirm RF3 topics continue 
 
 Identify the active controller, stop only its Kafka service, and verify a new leader is elected from the remaining majority. Confirm metadata operations and application traffic recover within the target SLO. Restart the original controller and wait for all three voters with zero lag.
 
+## Host reboot and attachment delay
+
+Reboot one node through a reviewed change. Verify UUID mounting happens before Kafka starts and that no format occurs. In a disposable replacement test, delay the expected EBS attachment: bootstrap must fail closed and later succeed after the right volume appears. A different volume must never be formatted as a substitute.
+
