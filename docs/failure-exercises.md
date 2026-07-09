@@ -16,3 +16,7 @@ Identify the active controller, stop only its Kafka service, and verify a new le
 
 Reboot one node through a reviewed change. Verify UUID mounting happens before Kafka starts and that no format occurs. In a disposable replacement test, delay the expected EBS attachment: bootstrap must fail closed and later succeed after the right volume appears. A different volume must never be formatted as a substitute.
 
+## AZ loss
+
+Use your approved AWS fault-injection procedure to isolate one zone. Confirm the remaining two controllers form a majority and correctly placed replicas satisfy ISR2. Observe clients' advertised-address failover, NAT independence and management reachability. Restore the zone and verify full recovery before concluding the exercise.
+
