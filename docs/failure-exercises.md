@@ -24,3 +24,6 @@ Use your approved AWS fault-injection procedure to isolate one zone. Confirm the
 
 In a disposable cluster, verify loss of the controller majority or falling below minimum ISR stops unsafe writes. Simulate disk pressure with bounded test data, then exercise capacity alerts and [expansion](runbooks/storage-expansion.md). Never deliberately fill production controller storage.
 
+## DR recovery
+
+Exercise [recovery](runbooks/recovery.md) in an isolated destination. Record retained data range, offsets, ACL restoration, client cutover and prevention of dual writers. Snapshots or replication configurations without a demonstrated restore do not establish an RPO/RTO.
