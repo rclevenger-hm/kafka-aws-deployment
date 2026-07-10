@@ -20,3 +20,7 @@ Reboot one node through a reviewed change. Verify UUID mounting happens before K
 
 Use your approved AWS fault-injection procedure to isolate one zone. Confirm the remaining two controllers form a majority and correctly placed replicas satisfy ISR2. Observe clients' advertised-address failover, NAT independence and management reachability. Restore the zone and verify full recovery before concluding the exercise.
 
+## Reduced quorum and disk pressure
+
+In a disposable cluster, verify loss of the controller majority or falling below minimum ISR stops unsafe writes. Simulate disk pressure with bounded test data, then exercise capacity alerts and [expansion](runbooks/storage-expansion.md). Never deliberately fill production controller storage.
+
