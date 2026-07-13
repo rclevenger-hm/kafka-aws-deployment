@@ -16,3 +16,6 @@ Terraform creates one EC2 status alarm per node. Set `alarm_topic_arns` to exist
 
 Add your standard host collector for filesystem free space/inodes, disk latency/queue depth, CPU, memory pressure, network drops and certificate expiration. Kafka/JMX alone does not expose filesystem capacity or every host failure. Use CloudWatch EBS metrics alongside Linux observations and benchmark baselines.
 
+## Logs
+
+Use Session Manager and `journalctl -u kafka`. Initial provisioning is visible through `cloud-init status --long` and the cloud-final journal. Kafka log files remain under `/var/log/kafka`; central application-log shipping is an account integration task. Retain sanitized logs and audit events for maintenance reviews. Never ingest PEM bundles or secret API responses into logs.
