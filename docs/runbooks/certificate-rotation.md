@@ -6,3 +6,7 @@ Issue a new certificate with the same exact node CN and advertised DNS SAN, both
 
 Apply the reviewed runtime-object plan, then follow [rolling changes](rolling-upgrade.md) one node at a time. Verify peer and client authentication before continuing. Keep the previous version available for rollback; secret-level IAM permits versions of the same secret while the manifest selects one exact ID.
 
+## CA rotation
+
+First deploy a trust bundle containing old and new CA certificates to all nodes and clients. Roll trust and verify full health. Next replace leaf identities with certificates signed by the new CA, one at a time. Remove the old CA only after every active identity has migrated. A one-step trust replacement can partition the cluster.
+
