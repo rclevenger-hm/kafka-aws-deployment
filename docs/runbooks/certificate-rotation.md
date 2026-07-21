@@ -10,3 +10,6 @@ Apply the reviewed runtime-object plan, then follow [rolling changes](rolling-up
 
 First deploy a trust bundle containing old and new CA certificates to all nodes and clients. Roll trust and verify full health. Next replace leaf identities with certificates signed by the new CA, one at a time. Remove the old CA only after every active identity has migrated. A one-step trust replacement can partition the cluster.
 
+## Expiry and custody
+
+Monitor expiration independently of Kafka health. The lab generator's 30-day certificates are unsuitable for unattended production. Keep CA/admin keys out of node secrets and Terraform. Never place bundle contents in workflow artifacts, issue reports or logs.
