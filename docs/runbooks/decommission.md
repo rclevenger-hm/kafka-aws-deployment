@@ -10,3 +10,6 @@ Disable EC2 API termination protection only for the intended retired nodes and r
 
 Run and review a destroy plan against the correct backend. Detach storage gracefully with nodes stopped. Retain required snapshots and state versions outside the destroyed resources. Track NAT gateways, EIPs and interface endpoints until their deletion is confirmed to avoid ongoing charges.
 
+## Close access
+
+Revoke retired client and operator access, remove obsolete secret versions according to retention policy, and retire collectors/alerts after shutdown is confirmed. The state bucket and pre-existing secrets/SNS topics are external to this module; manage their retention separately. Record the completion and final recovery location without including private keys.
