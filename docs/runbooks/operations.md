@@ -8,3 +8,7 @@ From an authorized private admin host, run `tools/health.py` with the bootstrap 
 
 Use the `session_commands` Terraform output. Inspect `systemctl status kafka`, `journalctl -u kafka`, `findmnt /var/lib/kafka`, `df -h /var/lib/kafka` and EC2/EBS metrics. Confirm the mounted UUID and volume serial before any storage action. Keep keys and secret API responses out of terminal transcripts.
 
+## Application onboarding
+
+Issue a distinct client certificate, ensure private routing/DNS, permit its narrow client CIDR and grant only the required topic/group/transactional-ID ACLs. Use idempotent producers with `acks=all`. Check allowed and denied operations. Review topic retention, replication factor and minimum ISR explicitly; broker defaults do not retrofit existing topics.
+
