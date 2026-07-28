@@ -4,3 +4,9 @@
 
 Record surviving controller voters, replica ISR, volume identities and recent changes. Fence failed instances before reusing their Kafka node IDs. Stop concurrent automation. A process restart, node replacement, AZ loss and regional disaster require different actions; do not reformat a disk to make a failed startup disappear.
 
+## Same-zone broker replacement
+
+Prefer reattaching the preserved EBS data volume to a replacement in the same AZ with the same node ID, private DNS and expected volume ID. Keep forced detach disabled and confirm the old host cannot return as a duplicate identity. Restore the node from the reviewed manifest, wait for ISR recovery and run a retained-data verification before replacing another node.
+
+If a broker disk is irrecoverable, preserve evidence and rebuild replicas from healthy brokers using a controlled replacement procedure. New storage must be empty and belong to the intended node/cluster. EBS `prevent_destroy` requires explicit operator action; do not broadly remove lifecycle guards or discard state.
+
