@@ -10,3 +10,7 @@ Prefer reattaching the preserved EBS data volume to a replacement in the same AZ
 
 If a broker disk is irrecoverable, preserve evidence and rebuild replicas from healthy brokers using a controlled replacement procedure. New storage must be empty and belong to the intended node/cluster. EBS `prevent_destroy` requires explicit operator action; do not broadly remove lifecycle guards or discard state.
 
+## Controller recovery
+
+Keep a majority of controller metadata intact. One failed controller can be repaired with quorum-specific Kafka procedures and its retained identity. Do not initialize a second cluster UUID or format all controllers together. If a majority's metadata is lost, stop and follow the exact Kafka version's supported recovery procedure with an expert review; broker data alone does not reconstruct every metadata state safely.
+
