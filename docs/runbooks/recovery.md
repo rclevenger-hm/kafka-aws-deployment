@@ -18,3 +18,9 @@ Keep a majority of controller metadata intact. One failed controller can be repa
 
 EBS cannot attach across AZs. Restore the original zone, rebuild broker replicas into reviewed replacement capacity, or restore a snapshot into the target AZ with explicit Terraform/identity reconciliation. Cross-zone controller movement is a membership operation, not a variable edit. Verify client DNS and replica rack placement after recovery.
 
+## Backup and remote DR
+
+Independent crash-consistent EBS snapshots are not an atomic Kafka cluster backup. Use a documented, tested strategy for topics, offsets, ACLs, metadata and application ordering. [MirrorMaker2 example](../../config/mirrormaker2.properties.example) is a starting configuration only; no remote cluster or replication service is deployed.
+
+Test DR in an isolated destination and measure retained records, offset translation, RPO/RTO and cutover. Fence the old writers before activating a recovery destination. Avoid dual writers or an untested attempt to merge divergent logs.
+
