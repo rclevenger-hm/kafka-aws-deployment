@@ -14,3 +14,7 @@ If a broker disk is irrecoverable, preserve evidence and rebuild replicas from h
 
 Keep a majority of controller metadata intact. One failed controller can be repaired with quorum-specific Kafka procedures and its retained identity. Do not initialize a second cluster UUID or format all controllers together. If a majority's metadata is lost, stop and follow the exact Kafka version's supported recovery procedure with an expert review; broker data alone does not reconstruct every metadata state safely.
 
+## AZ recovery
+
+EBS cannot attach across AZs. Restore the original zone, rebuild broker replicas into reviewed replacement capacity, or restore a snapshot into the target AZ with explicit Terraform/identity reconciliation. Cross-zone controller movement is a membership operation, not a variable edit. Verify client DNS and replica rack placement after recovery.
+
