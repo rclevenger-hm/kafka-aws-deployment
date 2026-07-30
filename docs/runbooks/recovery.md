@@ -24,3 +24,6 @@ Independent crash-consistent EBS snapshots are not an atomic Kafka cluster backu
 
 Test DR in an isolated destination and measure retained records, offset translation, RPO/RTO and cutover. Fence the old writers before activating a recovery destination. Avoid dual writers or an untested attempt to merge divergent logs.
 
+## Terraform state recovery
+
+Recover a known-good version from the protected backend and reconcile against actual resource IDs before any apply. Retain cluster/controller UUIDs, volume IDs and runtime object versions. Never initialize fresh state against an existing cluster and accept replacements without reviewing the resulting identity changes.
