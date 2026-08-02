@@ -18,3 +18,9 @@ sudo journalctl -u kafka --since '-10 minutes'
 
 The command takes a nonblocking local lock, validates secret identity, storage, checksums and TLS, then restarts only that node. Wait for healthy quorum, full ISR and a successful smoke test before another node. Follow the Kafka release's controller/broker ordering guidance. Never restart a controller majority together.
 
+## Roll back
+
+Stop on new offline partitions, increasing quorum lag, sustained client failures or missing replicas. Revert desired runtime inputs and apply the reviewed S3-only plan. If the target release supports downgrade and no incompatible feature level has been finalized, refresh the affected node with `--apply-change`.
+
+For a previously recorded S3 object version, use `sudo kafka-refresh --apply-change --version-id RECORDED_VERSION` on that node only, then reconcile Terraform's desired source. A historical manifest still references its exact TLS version and Kafka checksum. It cannot undo incompatible on-disk formats, changed quorum membership or finalized feature levels.
+
