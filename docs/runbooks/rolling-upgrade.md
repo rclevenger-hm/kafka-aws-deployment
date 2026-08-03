@@ -24,3 +24,6 @@ Stop on new offline partitions, increasing quorum lag, sustained client failures
 
 For a previously recorded S3 object version, use `sudo kafka-refresh --apply-change --version-id RECORDED_VERSION` on that node only, then reconcile Terraform's desired source. A historical manifest still references its exact TLS version and Kafka checksum. It cannot undo incompatible on-disk formats, changed quorum membership or finalized feature levels.
 
+## Image and instance replacement
+
+Retain the node's EBS disk, IP/DNS, Kafka ID and cluster identity. Drain/fence one node and remove the compute destruction guard only in a reviewed temporary change. Keep forced EBS detach disabled. Confirm the planned replacement is restricted to that node and keep other nodes healthy. Restore the guard after replacement. Practice this in staging before relying on it for patching.
