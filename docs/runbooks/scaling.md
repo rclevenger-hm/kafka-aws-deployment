@@ -14,3 +14,6 @@ Adding EC2 instances does not move Kafka partitions. Generate an explicit reassi
 
 Move every replica off the broker, verify zero assigned partitions and fence the retiring process. Update operational inventories and TLS access. Reducing `broker_count` is blocked by storage/compute destruction guards until a reviewed retirement change is made. Preserve needed recovery data and remove only the intended resources.
 
+## Controller scope
+
+This module intentionally maintains three controllers. Changing controller membership, directory IDs or AZs is a separate quorum migration that must use Kafka's version-specific procedure. Never infer that changing Terraform map entries safely changes an active KRaft voter set.
