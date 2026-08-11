@@ -14,3 +14,6 @@ On the node, resolve the volume using its EBS serial and verify the mounted file
 
 Verify `df -h /var/lib/kafka`, `lsblk`, filesystem errors, Kafka health and the roundtrip tool. Record before/after sizes. Increasing EBS capacity does not automatically grow ext4; bootstrap intentionally avoids modifying an existing filesystem's size.
 
+## Performance changes
+
+Change gp3 IOPS/throughput independently of capacity within the validated limits. Compare effective performance with the instance's EBS ceiling and workload p99. Keep restoration and normal traffic within measured spare capacity.
