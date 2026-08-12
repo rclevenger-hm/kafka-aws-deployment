@@ -20,3 +20,9 @@ Node egress is intentionally broad through zonal NAT for distribution packages, 
 
 Do not give applications a node or admin private key. Disable automatic topic creation and preserve minimum ISR policy. Test both allowed and denied operations with the actual client library.
 
+## Secret handling
+
+Each node's pinned version is retrieved with its instance profile at refresh time. A new secret version does not silently rotate running services. Certificate validation checks key agreement, exact CN, DNS name, trust and at least one day of validity before stopping the active service. Keep rollback versions until the maintenance window closes.
+
+Protect state, tfvars, plan files, lab PKI and private client files. Git ignores common key/state/cache paths, but operators must still inspect staged changes. Do not upload secret-bearing logs, core dumps or manifests to public issues.
+
