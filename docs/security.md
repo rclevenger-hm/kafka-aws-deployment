@@ -14,3 +14,9 @@ EBS boot/data volumes are encrypted. The runtime bucket blocks all public access
 
 Node egress is intentionally broad through zonal NAT for distribution packages, Apache and GitHub artifacts. VPC endpoints keep supported management calls private. Organizations requiring destination filtering should provide an egress proxy/firewall and approved mirrors, then validate every bootstrap dependency before narrowing egress.
 
+## Kafka authorization
+
+`StandardAuthorizer` denies requests without ACLs. Exact node CNs and reviewed administrator principals are superusers because cluster internals require broad permissions. Application certificates must have distinct principals and explicit topic/group/transactional-ID ACLs. A certificate signed by the trusted CA alone grants no Kafka authorization; CI verifies this denial.
+
+Do not give applications a node or admin private key. Disable automatic topic creation and preserve minimum ISR policy. Test both allowed and denied operations with the actual client library.
+
