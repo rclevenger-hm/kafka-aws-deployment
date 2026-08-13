@@ -26,3 +26,8 @@ Each node's pinned version is retrieved with its instance profile at refresh tim
 
 Protect state, tfvars, plan files, lab PKI and private client files. Git ignores common key/state/cache paths, but operators must still inspect staged changes. Do not upload secret-bearing logs, core dumps or manifests to public issues.
 
+## Runtime hardening
+
+Kafka runs as an unprivileged system user with a read-only system filesystem, no Linux capabilities, protected kernel controls, private temporary files and explicit data/log write paths. The bootstrap runs as root only on dedicated nodes and validates artifact checksums before extraction. Archive traversal, symlinks and special files are rejected.
+
+Complete account-level audit logging, patch management, vulnerability review, certificate expiry monitoring and incident-response ownership before production use. Review [security reporting](../SECURITY.md).
