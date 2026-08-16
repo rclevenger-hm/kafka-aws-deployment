@@ -25,3 +25,6 @@ The CI job runs on an isolated Ubuntu runner. Allow roughly several minutes and 
 
 CI uses Prometheus `promtool` to validate rule syntax and evaluate alert scenarios from [alerts.test.yml](../monitoring/alerts.test.yml). To reproduce, run the monitoring commands in [.github/workflows/ci.yml](../.github/workflows/ci.yml) with Docker installed.
 
+## Acceptance boundary
+
+Passing CI establishes source, mock-plan and local Kafka behavior. It does not claim successful live EC2 provisioning, EBS attachment, Session Manager access, AL2023 service hardening, AZ failure recovery, workload performance or remote disaster recovery. Record those results using [acceptance](acceptance.md).
