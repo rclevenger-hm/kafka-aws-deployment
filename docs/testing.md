@@ -21,3 +21,7 @@ Requires Java 17, Python 3, OpenSSL, Internet access for checksum-verified artif
 
 The CI job runs on an isolated Ubuntu runner. Allow roughly several minutes and enough RAM for six JVMs. A restricted sandbox that cannot create listening sockets cannot execute this integration; run it on a suitable host or GitHub Actions.
 
+## Alert tests
+
+CI uses Prometheus `promtool` to validate rule syntax and evaluate alert scenarios from [alerts.test.yml](../monitoring/alerts.test.yml). To reproduce, run the monitoring commands in [.github/workflows/ci.yml](../.github/workflows/ci.yml) with Docker installed.
+
