@@ -20,3 +20,14 @@ The module creates three AZ subnet pairs, zonal NAT, private endpoints/DNS, six 
 | deletion protection | Enabled | Additional lifecycle guards are unconditional |
 | Kafka | 4.1.2 +SHA512 | Change version and digest together |
 
+## Validation
+
+```bash
+terraform fmt -check -recursive
+terraform init -backend=false -input=false -lockfile=readonly
+terraform validate
+terraform test
+```
+
+Mock plans do not create AWS resources. A real deployment requires reinitialization with the correct backend. Avoid targeted plans as a general rollout strategy; review a complete plan and use the documented one-node runtime/replacement procedures.
+
