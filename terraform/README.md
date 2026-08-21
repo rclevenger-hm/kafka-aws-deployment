@@ -31,3 +31,8 @@ terraform test
 
 Mock plans do not create AWS resources. A real deployment requires reinitialization with the correct backend. Avoid targeted plans as a general rollout strategy; review a complete plan and use the documented one-node runtime/replacement procedures.
 
+## Lifecycle
+
+Source/configuration changes update versioned S3 objects without changing instance user data. Use [rolling changes](../docs/runbooks/rolling-upgrade.md) to activate them. AMI/type/user-data changes may require instance replacement and are deliberately blocked by `prevent_destroy` until a reviewed maintenance change. EBS and runtime bucket deletion are separately guarded.
+
+Outputs include private bootstrap servers, cluster/node identities, volume IDs, runtime version IDs, subnets, security groups and Session Manager commands. No TLS payload is output or read into state.
