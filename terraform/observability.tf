@@ -25,3 +25,19 @@ resource "aws_flow_log" "kafka" {
   max_aggregation_interval = 60
   depends_on               = [aws_iam_role_policy.flow]
 }
+resource "aws_cloudwatch_metric_alarm" "node_status" {
+  for_each            = local.nodes
+  alarm_name          = "${each.key}-status"
+  alarm_description   = "EC2 instance or host status check failure; inspect Kafka quorum before recovery"
+  namespace           = "AWS/EC2"
+  metric_name         = "StatusCheckFailed"
+  statistic           = "Maximum"
+  period              = 60
+  evaluation_periods  = 2
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = 1
+  treat_missing_data  = "missing"
+  dimensions          = { InstanceId = aws_instance.node[each.key].id }
+  alarm_actions       = var.alarm_topic_arns
+  ok_actions          = var.alarm_topic_arns
+}
