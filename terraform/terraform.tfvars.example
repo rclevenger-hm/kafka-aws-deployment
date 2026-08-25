@@ -1,0 +1,17 @@
+region = "us-east-1"
+zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+# Resolve an Amazon-owned AL2023 standard x86_64 AMI; pin the reviewed ID.
+ami_id = "ami-REPLACE_WITH_REVIEWED_ID"
+name_prefix = "kafka"
+client_cidrs = ["10.42.192.0/24"]
+metrics_cidrs = ["10.42.193.0/24"]
+tags = { Environment = "production", Owner = "platform" }
+# Existing secrets; upload PEM JSON out of band. Repeat for every node.
+tls_secrets = {
+  kafka-controller-1 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-controller-1-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+  kafka-controller-2 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-controller-2-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+  kafka-controller-3 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-controller-3-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+  kafka-broker-1 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-broker-1-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+  kafka-broker-2 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-broker-2-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+  kafka-broker-3 = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:kafka-broker-3-ABCDEF", version_id = "REPLACE_WITH_IMMUTABLE_VERSION_ID" }
+}
