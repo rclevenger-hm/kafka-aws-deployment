@@ -6,3 +6,7 @@ mock_provider "aws" {
   }
   mock_resource "aws_ebs_volume" { defaults = { id = "vol-0123456789abcdef0" } }
 }
+mock_provider "random" {
+  override_during = plan
+  mock_resource "random_id" { defaults = { b64_url = "AAAAAAAAAAAAAAAAAAAAAA" } }
+}
