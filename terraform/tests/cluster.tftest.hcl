@@ -66,3 +66,14 @@ run "private_topology" {
   }
 }
 
+run "client_allowlist" {
+  command = plan
+  variables {
+    client_cidrs = ["10.60.0.0/24"]
+  }
+  assert {
+    condition     = aws_vpc_security_group_ingress_rule.clients["10.60.0.0/24"].from_port == 9092 && aws_vpc_security_group_ingress_rule.clients["10.60.0.0/24"].to_port == 9092
+    error_message = "Clients may reach only the client listener."
+  }
+}
+
