@@ -99,3 +99,14 @@ run "private_endpoint_opt_out" {
   }
 }
 
+run "flow_log_opt_out" {
+  command = plan
+  variables {
+    enable_flow_logs = false
+  }
+  assert {
+    condition     = length(aws_flow_log.kafka) == 0 && length(aws_cloudwatch_log_group.flow) == 0
+    error_message = "Flow log opt out removes the logging resources."
+  }
+}
+
