@@ -88,3 +88,14 @@ run "metrics_allowlist" {
   }
 }
 
+run "private_endpoint_opt_out" {
+  command = plan
+  variables {
+    enable_private_endpoints = false
+  }
+  assert {
+    condition     = length(aws_vpc_endpoint.management) == 0 && length(aws_nat_gateway.egress) == 3
+    error_message = "Endpoint opt out retains NAT for management and artifacts."
+  }
+}
+
