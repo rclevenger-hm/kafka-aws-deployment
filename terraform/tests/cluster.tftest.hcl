@@ -77,3 +77,14 @@ run "client_allowlist" {
   }
 }
 
+run "metrics_allowlist" {
+  command = plan
+  variables {
+    metrics_cidrs = ["10.60.1.0/24"]
+  }
+  assert {
+    condition     = length(aws_vpc_security_group_ingress_rule.metrics) == 2 && alltrue([for r in aws_vpc_security_group_ingress_rule.metrics : r.from_port == 9404 && r.to_port == 9404])
+    error_message = "Allow explicit collectors to both node roles only at the exporter port."
+  }
+}
+
