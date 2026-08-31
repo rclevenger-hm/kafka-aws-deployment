@@ -110,3 +110,15 @@ run "flow_log_opt_out" {
   }
 }
 
+run "per_node_secret_access" {
+  command = plan
+  assert {
+    condition     = alltrue([for name, policy in aws_iam_role_policy.runtime : jsondecode(policy.policy).Statement[1].Resource == var.tls_secrets[name].arn])
+    error_message = "IAM may read only the corresponding node secret."
+  }
+  assert {
+    condition     = alltrue([for name, policy in aws_iam_role_policy.runtime : endswith(jsondecode(policy.policy).Statement[0].Resource, "/nodes/${name}.json")])
+    error_message = "Runtime object access must be scoped to one node."
+  }
+}
+
