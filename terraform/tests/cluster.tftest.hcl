@@ -134,3 +134,19 @@ run "runtime_updates_are_staged" {
   }
 }
 
+run "custom_gp3_performance" {
+  command = plan
+  variables {
+    broker_disk_iops       = 6000
+    broker_disk_throughput = 250
+  }
+  assert {
+    condition     = aws_ebs_volume.data["kafka-broker-1"].iops == 6000 && aws_ebs_volume.data["kafka-broker-1"].throughput == 250
+    error_message = "Expose explicit broker EBS performance."
+  }
+  assert {
+    condition     = aws_ebs_volume.data["kafka-controller-1"].iops == 3000
+    error_message = "Keep controller disk profile separate."
+  }
+}
+
