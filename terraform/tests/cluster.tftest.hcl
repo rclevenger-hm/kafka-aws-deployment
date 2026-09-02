@@ -150,3 +150,11 @@ run "custom_gp3_performance" {
   }
 }
 
+run "same_zone_storage" {
+  command = plan
+  assert {
+    condition     = alltrue([for name, volume in aws_ebs_volume.data : volume.availability_zone == local.nodes[name].zone])
+    error_message = "An EBS volume must be in the same zone as its node."
+  }
+}
+
