@@ -158,3 +158,11 @@ run "same_zone_storage" {
   }
 }
 
+run "pinned_ami" {
+  command = plan
+  assert {
+    condition     = alltrue([for n in aws_instance.node : n.ami == "ami-0123456789abcdef0"])
+    error_message = "Use the selected pinned AMI."
+  }
+}
+
