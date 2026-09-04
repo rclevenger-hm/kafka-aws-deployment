@@ -166,3 +166,11 @@ run "pinned_ami" {
   }
 }
 
+run "no_forced_detach" {
+  command = plan
+  assert {
+    condition     = alltrue([for a in aws_volume_attachment.data : !a.force_detach && a.stop_instance_before_detaching])
+    error_message = "Detach must be graceful, with the instance stopped."
+  }
+}
+
