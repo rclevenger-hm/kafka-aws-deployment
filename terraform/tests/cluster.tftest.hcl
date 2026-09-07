@@ -192,3 +192,9 @@ run "reject_broad_private_clients" {
   expect_failures = [var.client_cidrs]
 }
 
+run "reject_public_vpc" {
+  command = plan
+  variables { vpc_cidr = "8.8.0.0/16" }
+  expect_failures = [var.vpc_cidr]
+}
+
