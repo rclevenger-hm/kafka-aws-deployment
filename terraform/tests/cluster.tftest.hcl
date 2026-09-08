@@ -198,3 +198,9 @@ run "reject_public_vpc" {
   expect_failures = [var.vpc_cidr]
 }
 
+run "reject_tiny_vpc" {
+  command = plan
+  variables { vpc_cidr = "10.42.0.0/28" }
+  expect_failures = [var.vpc_cidr]
+}
+
