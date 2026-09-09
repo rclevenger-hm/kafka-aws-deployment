@@ -204,3 +204,9 @@ run "reject_tiny_vpc" {
   expect_failures = [var.vpc_cidr]
 }
 
+run "reject_ipv6" {
+  command = plan
+  variables { vpc_cidr = "fd00::/64" }
+  expect_failures = [var.vpc_cidr]
+}
+
