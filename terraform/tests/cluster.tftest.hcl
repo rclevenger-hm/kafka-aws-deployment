@@ -240,3 +240,9 @@ run "reject_mutable_ami" {
   expect_failures = [var.ami_id]
 }
 
+run "reject_non_nitro_arm" {
+  command = plan
+  variables { broker_instance_type = "m7g.large" }
+  expect_failures = [var.broker_instance_type]
+}
+
