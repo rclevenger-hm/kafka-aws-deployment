@@ -234,3 +234,9 @@ run "reject_wrong_region" {
   expect_failures = [var.zones]
 }
 
+run "reject_mutable_ami" {
+  command = plan
+  variables { ami_id = "latest" }
+  expect_failures = [var.ami_id]
+}
+
