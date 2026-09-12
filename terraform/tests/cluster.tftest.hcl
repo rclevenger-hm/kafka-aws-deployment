@@ -252,3 +252,9 @@ run "reject_excessive_throughput" {
   expect_failures = [var.broker_disk_throughput]
 }
 
+run "reject_insufficient_iops" {
+  command = plan
+  variables { broker_disk_iops = 2999 }
+  expect_failures = [var.broker_disk_iops]
+}
+
