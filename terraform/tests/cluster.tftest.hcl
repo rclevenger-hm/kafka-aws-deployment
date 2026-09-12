@@ -246,3 +246,9 @@ run "reject_non_nitro_arm" {
   expect_failures = [var.broker_instance_type]
 }
 
+run "reject_excessive_throughput" {
+  command = plan
+  variables { broker_disk_throughput = 1001 }
+  expect_failures = [var.broker_disk_throughput]
+}
+
