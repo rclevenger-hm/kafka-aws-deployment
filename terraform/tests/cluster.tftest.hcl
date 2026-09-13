@@ -264,3 +264,8 @@ run "reject_fractional_disk" {
   expect_failures = [var.broker_disk_gb]
 }
 
+run "reject_mutable_secret" {
+  command = plan
+  variables { tls_secrets = { kafka = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:node-ABCDEF", version_id = "AWSCURRENT" } } }
+  expect_failures = [var.tls_secrets]
+}
