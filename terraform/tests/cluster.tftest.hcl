@@ -258,3 +258,9 @@ run "reject_insufficient_iops" {
   expect_failures = [var.broker_disk_iops]
 }
 
+run "reject_fractional_disk" {
+  command = plan
+  variables { broker_disk_gb = 100.5 }
+  expect_failures = [var.broker_disk_gb]
+}
+
