@@ -269,3 +269,8 @@ run "reject_mutable_secret" {
   variables { tls_secrets = { kafka = { arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:node-ABCDEF", version_id = "AWSCURRENT" } } }
   expect_failures = [var.tls_secrets]
 }
+run "reject_missing_node_secrets" {
+  command = plan
+  variables { tls_secrets = {} }
+  expect_failures = [aws_s3_object.node]
+}
