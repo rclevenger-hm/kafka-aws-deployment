@@ -47,3 +47,41 @@ class EbsTests(unittest.TestCase):
         with self.assertRaises(ValueError): provision.select_ebs_device([], "root")
 
 
+class SecretsTests(unittest.TestCase):
+    def response(self, **changes):
+        c = config()
+        response = dict(ARN=c["tls_secret_arn"], VersionId=c["tls_secret_version"], SecretString=json.dumps({"certificate": "test"}))
+        response.update(changes)
+        return SimpleNamespace(stdout=json.dumps(response))
+
+    def fetch(self):
+        c = config()
+        return provision.secret_payload(c["tls_secret_arn"], c["tls_secret_version"], c["region"])
+
+    def test_exact_version_requested_without_secret_logging(self):
+        with patch.object(provision, "run", return_value=self.response()) as run:
+            self.assertEqual(self.fetch(), {"certificate": "test"})
+            self.assertIn("--version-id", run.call_args.args)
+            self.assertIn(config()["tls_secret_version"], run.call_args.args)
+            self.assertTrue(run.call_args.kwargs["capture_output"])
+
+    def test_wrong_response_version_rejected(self):
+        with patch.object(provision, "run", return_value=self.response(VersionId="different")):
+            with self.assertRaises(ValueError): self.fetch()
+
+    def test_wrong_response_secret_rejected(self):
+        with patch.object(provision, "run", return_value=self.response(ARN="other")):
+            with self.assertRaises(ValueError): self.fetch()
+
+    def test_cross_region_secret_rejected_before_api_call(self):
+        c = config()
+        with patch.object(provision, "run") as run:
+            with self.assertRaises(ValueError): provision.secret_payload(c["tls_secret_arn"], c["tls_secret_version"], "us-west-2")
+            run.assert_not_called()
+
+    def test_mutable_stage_and_shell_injection_rejected(self):
+        for version in ("AWSCURRENT", "latest", "a" * 32 + ";id"):
+            with self.subTest(version=version), self.assertRaises(ValueError):
+                provision.secret_payload(config()["tls_secret_arn"], version, "us-east-1")
+
+
