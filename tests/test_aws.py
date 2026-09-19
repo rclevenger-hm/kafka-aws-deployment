@@ -85,3 +85,27 @@ class SecretsTests(unittest.TestCase):
                 provision.secret_payload(config()["tls_secret_arn"], version, "us-east-1")
 
 
+class ManifestTests(unittest.TestCase):
+    def manifest(self):
+        return dict(schema_version=1, files={name: "content" for name in refresh.FILES}, config=config())
+
+    def test_expected_manifest_is_accepted(self):
+        manifest = self.manifest()
+        self.assertEqual(refresh.validate_manifest(manifest), manifest)
+
+    def test_unknown_schema_rejected(self):
+        manifest = self.manifest(); manifest["schema_version"] = 2
+        with self.assertRaises(ValueError): refresh.validate_manifest(manifest)
+
+    def test_path_traversal_file_rejected(self):
+        manifest = self.manifest(); manifest["files"]["../../etc/passwd"] = "bad"
+        with self.assertRaises(ValueError): refresh.validate_manifest(manifest)
+
+    def test_missing_file_rejected(self):
+        manifest = self.manifest(); del manifest["files"]["kafka.service"]
+        with self.assertRaises(ValueError): refresh.validate_manifest(manifest)
+
+    def test_nontext_and_empty_content_rejected(self):
+        for value in (None, {}, ""):
+            manifest = self.manifest(); manifest["files"]["provision.py"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError): refresh.validate_manifest(manifest)
