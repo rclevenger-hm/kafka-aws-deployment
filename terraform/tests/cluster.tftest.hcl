@@ -129,7 +129,7 @@ run "runtime_updates_are_staged" {
     error_message = "Runtime manifests must pin secret versions."
   }
   assert {
-    condition     = alltrue([for object in aws_s3_object.node : !strcontains(object.content, "BEGIN PRIVATE KEY")])
+    condition     = alltrue([for object in aws_s3_object.node : !strcontains(jsonencode(jsondecode(object.content).config), "-----BEGIN") && !contains(keys(jsondecode(object.content).config), "private_key")])
     error_message = "Private keys must not enter S3 runtime manifests or Terraform state."
   }
 }
