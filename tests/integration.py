@@ -32,7 +32,8 @@ def main():
         pki.create_ca(root / "pki")
         pki.issue(root / "pki", "kafka-admin")
         pki.issue(root / "pki", "unprivileged-client")
-        cluster = kafka_uuid()
+        # Exercise option-like cluster IDs on every run, without relying on chance.
+        cluster = "-" + kafka_uuid()[1:]
         controllers = ",".join(f"{100+i}@localhost:{19093+i}:{kafka_uuid()}" for i in range(3))
         quorum = ",".join(f"localhost:{19093+i}" for i in range(3))
         names = [f"kafka-controller-{i+1}" for i in range(3)] + [f"kafka-broker-{i+1}" for i in range(3)]
@@ -56,9 +57,8 @@ def main():
                 else:
                     properties = properties.replace(":9092", f":{29092+i}").replace(":9094", f":{39094+i}")
                 conf = node / "server.properties"; conf.write_text(properties)
-                format_cmd = [str(kafka / "bin/kafka-storage.sh"), "format", "--cluster-id", cluster, "--config", str(conf)]
-                format_cmd += ["--initial-controllers", controllers] if role == "controller" else ["--no-initial-controllers"]
-                subprocess.run(format_cmd, check=True, env=environment, timeout=45, capture_output=True)
+                format_cmd = provision.storage_format_command(c, kafka, conf)
+                subprocess.run(format_cmd, check=True, env=environment, timeout=45)
                 if not provision.verify_identity(node / "storage", cluster, c["node_id"]):
                     raise RuntimeError("Kafka storage identity validation failed")
                 log = (node / "server.log").open("w"); streams.append(log)

@@ -138,6 +138,14 @@ def verify_identity(root, cluster_id, node_id):
     return all(found)
 
 
+def storage_format_command(c, kafka_home="/opt/kafka", properties_path="/etc/kafka/server.properties"):
+    # Kafka UUIDs may start with '-'; keep the value attached to its option.
+    command = [str(Path(kafka_home) / "bin/kafka-storage.sh"), "format",
+               "--cluster-id=" + c["cluster_id"], "--config", str(properties_path)]
+    command += ["--initial-controllers", c["initial_controllers"]] if c["role"] == "controller" else ["--no-initial-controllers"]
+    return command
+
+
 def download_verified(url, destination, expected, algorithm="sha512"):
     if not url.startswith("https://"):
         raise ValueError("Artifacts require HTTPS")
@@ -314,9 +322,7 @@ def provision(config_path, allow_change=False):
     for path in (root, root / "data", root / "metadata", Path("/var/log/kafka")):
         os.chown(path, account.pw_uid, account.pw_gid)
     if not formatted:
-        command = ["runuser", "-u", "kafka", "--", "/opt/kafka/bin/kafka-storage.sh", "format", "--cluster-id", c["cluster_id"], "--config", "/etc/kafka/server.properties"]
-        command += ["--initial-controllers", c["initial_controllers"]] if c["role"] == "controller" else ["--no-initial-controllers"]
-        run(*command)
+        run("runuser", "-u", "kafka", "--", *storage_format_command(c))
     run("systemctl", "daemon-reload")
     run("systemctl", "enable", "--now", "kafka.service")
     run("systemctl", "is-active", "--quiet", "kafka.service")

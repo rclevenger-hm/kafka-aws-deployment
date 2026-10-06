@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 import unittest
-from helpers import provision
+from helpers import config, provision
 class StorageTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(); self.root = Path(self.temp.name)
@@ -31,3 +31,23 @@ class StorageTests(unittest.TestCase):
         provision.atomic_write(path, "first", 0o600); provision.atomic_write(path, "second", 0o600)
         self.assertEqual(path.read_text(), "second")
         self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
+
+class StorageFormatTests(unittest.TestCase):
+    def test_cluster_ids_are_attached_to_option_for_both_roles(self):
+        for role in ("controller", "broker"):
+            for cluster in ("AAAAAAAAAAAAAAAAAAAAAA", "-41-R1JMTYCsMaDkAghfqg", "_41-R1JMTYCsMaDkAghfqg"):
+                with self.subTest(role=role, cluster=cluster):
+                    c = config(role); c["cluster_id"] = cluster
+                    provision.validate_config(c)
+                    expected = ["/opt/kafka/bin/kafka-storage.sh", "format", "--cluster-id=" + cluster,
+                                "--config", "/etc/kafka/server.properties"]
+                    expected += ["--initial-controllers", c["initial_controllers"]] if role == "controller" else ["--no-initial-controllers"]
+                    self.assertEqual(provision.storage_format_command(c), expected)
+
+    def test_local_runtime_and_config_paths_are_separate_arguments(self):
+        c = config("controller")
+        command = provision.storage_format_command(c, Path("/tmp/kafka runtime"), Path("/tmp/node config/server.properties"))
+        self.assertEqual(command[0], "/tmp/kafka runtime/bin/kafka-storage.sh")
+        self.assertEqual(command[4], "/tmp/node config/server.properties")
+        self.assertEqual(command[-2:], ["--initial-controllers", c["initial_controllers"]])
