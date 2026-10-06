@@ -1,0 +1,85 @@
+name: Validate prepared AWS history
+on:
+  push:
+    branches: [validation/publish-prepared]
+permissions:
+  contents: write
+concurrency:
+  group: aws-prepared-history
+  cancel-in-progress: true
+jobs:
+  validate:
+    name: Validate ${{ matrix.check }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [python, terraform, integration, monitoring]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Load exact prepared source and history
+        run: |
+          base64 --decode .prepared/history.bundle.b64 > "$RUNNER_TEMP/history.bundle"
+          git bundle verify "$RUNNER_TEMP/history.bundle"
+          git fetch "$RUNNER_TEMP/history.bundle" main:refs/heads/prepared
+          git merge-base --is-ancestor origin/main prepared
+          git checkout prepared
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: hashicorp/setup-terraform@v3
+        if: matrix.check == 'terraform'
+        with:
+          terraform_version: '1.12.2'
+      - uses: actions/setup-java@v4
+        if: matrix.check == 'integration'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Python, documentation and shell checks
+        if: matrix.check == 'python'
+        run: make check
+      - name: Terraform schemas and mock plans
+        if: matrix.check == 'terraform'
+        run: |
+          terraform -chdir=terraform fmt -check -recursive
+          terraform -chdir=terraform init -backend=false -input=false -lockfile=readonly
+          terraform -chdir=terraform validate -no-color
+          terraform -chdir=terraform test -no-color
+      - name: Real Kafka TLS and failure exercises
+        if: matrix.check == 'integration'
+        run: make integration
+      - name: Prometheus alert validation
+        if: matrix.check == 'monitoring'
+        run: |
+          docker run --rm --entrypoint promtool -v "$PWD/monitoring:/work:ro" prom/prometheus:v3.2.1 check rules /work/alerts.yml
+          docker run --rm --entrypoint promtool -v "$PWD/monitoring:/work:ro" prom/prometheus:v3.2.1 test rules /work/alerts.test.yml
+  upload:
+    name: Upload validated Git objects
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Upload history for authorized branch promotion
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base64 --decode .prepared/history.bundle.b64 > "$RUNNER_TEMP/history.bundle"
+          git bundle verify "$RUNNER_TEMP/history.bundle"
+          git fetch "$RUNNER_TEMP/history.bundle" main:refs/heads/prepared
+          git merge-base --is-ancestor origin/main prepared
+          prepared_sha=$(git rev-parse prepared)
+          if ! git push origin prepared:refs/heads/prepared/aws-history > "$RUNNER_TEMP/push.log" 2>&1; then
+            cat "$RUNNER_TEMP/push.log"
+            if ! grep -q 'without.*workflows.*permission' "$RUNNER_TEMP/push.log"; then
+              exit 1
+            fi
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/git/commits/$prepared_sha" --jq .sha
+          echo "Validated history uploaded; main promotion uses the repository connection."
