@@ -21,6 +21,10 @@ Requires Java 17, Python 3, OpenSSL, Internet access for checksum-verified artif
 
 The CI job runs on an isolated Ubuntu runner. Allow roughly several minutes and enough RAM for six JVMs. A restricted sandbox that cannot create listening sockets cannot execute this integration; run it on a suitable host or GitHub Actions.
 
+Every integration run uses a valid cluster ID beginning with `-` and the same storage-format command builder as EC2 provisioning. This catches Kafka CLI argument parsing regressions that would otherwise appear intermittently with random IDs. Formatter output remains visible if bootstrap fails.
+
+The argument handling fix does not change cluster IDs or on-disk metadata. Existing formatted nodes still follow the identity checks and skip formatting. For a fresh node that failed before formatting, use the corrected runtime with its original cluster ID; never delete or reformat existing data to work around an argument error. Apply or roll back runtime changes through the normal [rolling-change procedure](runbooks/rolling-upgrade.md).
+
 ## Alert tests
 
 CI uses Prometheus `promtool` to validate rule syntax and evaluate alert scenarios from [alerts.test.yml](../monitoring/alerts.test.yml). To reproduce, run the monitoring commands in [.github/workflows/ci.yml](../.github/workflows/ci.yml) with Docker installed.
